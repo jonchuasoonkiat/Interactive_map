@@ -7,12 +7,12 @@ lat = list(data["LAT"])
 lon = list(data["LON"])
 name = list(data["NAME"])
 type = list(data["TYPE"])
-
+             
 #create function for changing colour of markers dynamically
 def colour_producer():
     if tp == "Boulder":
         return 'green'
-    elif tp == "Mixed":
+    elif tp == "Mixed":        
         return 'purple'
     elif tp == "HighWall":
         return 'blue'
@@ -27,6 +27,8 @@ map = folium.Map(location=[1.3649142214739636, 103.8329729018762], zoom_start = 
 for lt, ln, nm, tp in zip(lat, lon, name, type):
     fg.add_child(folium.Marker(location=[lt, ln], popup=nm, icon = folium.Icon(color = colour_producer())))
 
+#adding layer for boundary polygons
+fg.add_child(folium.GeoJson(data=(open('world.json', 'r', encoding='utf-8-sig').read())))
 
 #map.add_child(folium.Marker(location = [], popup="GymName", icon=folium.Icon(color = 'green')))
 map.add_child(fg)
