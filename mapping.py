@@ -21,15 +21,28 @@ def colour_producer():
     else:
         return 'gray'
 
-fg = folium.FeatureGroup(name = "My Map")
+#add feature group for climbing gyms in Singapore
+fgC = folium.FeatureGroup(name = "Climbing Gyms")
 map = folium.Map(location=[1.3649142214739636, 103.8329729018762], zoom_start = 12, tiles = "Stamen Terrain")
 
 for lt, ln, nm, tp in zip(lat, lon, name, type):
-    fg.add_child(folium.Marker(location=[lt, ln], popup=nm, icon = folium.Icon(color = colour_producer())))
+    fgC.add_child(folium.Marker(location=[lt, ln], popup=nm, icon = folium.Icon(color = colour_producer())))
 
-#adding layer for boundary polygons
-fg.add_child(folium.GeoJson(data=(open('world.json', 'r', encoding='utf-8-sig').read())))
+#add feature group for world population
+fgP = folium.FeatureGroup(name = "World Population")
 
+#adding layers for boundary polygons according to population
+fgP.add_child(folium.GeoJson(data=open('world.json', 'r', encoding='utf-8-sig').read(), 
+style_function=lambda x:{'fillColor':'yellow' if x['properties']['POP2005'] <10000000 else 'blue' if 10000000<= x['properties']['POP2005'] <20000000 else 'red'}))
+
+
+
+#adding feature groups into the map.
 #map.add_child(folium.Marker(location = [], popup="GymName", icon=folium.Icon(color = 'green')))
-map.add_child(fg)
+map.add_child(fgC)
+map.add_child(fgP)
+
+#put layer control after the feature group is added into the map
+map.add_child(folium.LayerControl())
+
 map.save("ClimbingGymsSingapore.html")
